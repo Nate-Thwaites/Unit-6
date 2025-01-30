@@ -4,7 +4,7 @@ public class ThirdPersonMovement : MonoBehaviour
 {
     public CharacterController controller;
     public Transform cam;
-    Animator anim;
+    public Animator anim;
 
     public float speed = 6f;
 
@@ -14,11 +14,15 @@ public class ThirdPersonMovement : MonoBehaviour
 
     private void Start()
     {
-        anim = GetComponent<Animator>();
+        
     }
 
     void Update()
     {
+       
+
+
+        AnimationPlayer();
         float horizontal = Input.GetAxisRaw("Horizontal");
         float verticle = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, verticle).normalized;
@@ -37,6 +41,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
         controller.SimpleMove(anyVector);
 
+
+        
         
     }
 
@@ -45,6 +51,13 @@ public class ThirdPersonMovement : MonoBehaviour
         if (Input.GetKey("w"))
         {
             anim.SetBool("walk", true);
+
+            
+        }
+
+        else
+        {
+            anim.SetBool("walk", false);
         }
 
         if (Input.GetKey("a"))
@@ -52,14 +65,33 @@ public class ThirdPersonMovement : MonoBehaviour
             anim.SetBool("walk", true);
         }
 
+        else
+        {
+            anim.SetBool("walk", false);
+        }
+
         if (Input.GetKey("s"))
         {
             anim.SetBool("walk", true);
+        }
+
+        else
+        {
+            anim.SetBool("walk", false);
         }
 
         if (Input.GetKey("d"))
         {
             anim.SetBool("walk", true);
         }
+
+        else
+        {
+            anim.SetBool("walk", false);
+        }
+
+
+
+
     }
 }
