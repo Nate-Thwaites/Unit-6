@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class ThirdPersonMovement : MonoBehaviour
@@ -5,13 +6,23 @@ public class ThirdPersonMovement : MonoBehaviour
     public CharacterController controller;
     public Transform cam;
     public Animator anim;
+    
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask;
+    bool isGrounded;
 
     public float speed = 6f;
+    public float gravity = 9.81f;
+    public float rotationSpeed = 90;
+    public float jumpHeight = 3f;
 
     public float turnSmoothTime = 0.1f;
     float turnSmoothVelocity;
-    private Vector3 anyVector;
-
+    private Vector3 velocity;
+    
+  
+ 
     private void Start()
     {
         
@@ -19,15 +30,23 @@ public class ThirdPersonMovement : MonoBehaviour
 
     void Update()
     {
-       
+       isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if (isGrounded && velocity.y <0)
+        {
+            velocity.y = 0f;
+            
+        }
 
 
-        AnimationPlayer();
+        
         float horizontal = Input.GetAxisRaw("Horizontal");
         float verticle = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, verticle).normalized;
+        anim.SetFloat("speed", direction.magnitude);
+        anim.SetFloat("Yvelocity", velocity.y);
+        anim.SetFloat("Jump", velocity.y);
 
-        
 
         if (direction.magnitude >= 0.1f)
         {
@@ -39,59 +58,30 @@ public class ThirdPersonMovement : MonoBehaviour
             controller.Move(moveDirection.normalized * speed * Time.deltaTime);
         }
 
-        controller.SimpleMove(anyVector);
-
-
-        
-        
-    }
-
-    public void AnimationPlayer()
-    {
-        if (Input.GetKey("w"))
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            anim.SetBool("walk", true);
-
+            StartCoroutine(JumpDelay());
+            anim.SetBool("jumping", true);
             
         }
-
-        else
-        {
-            anim.SetBool("walk", false);
-        }
-
-        if (Input.GetKey("a"))
-        {
-            anim.SetBool("walk", true);
-        }
-
-        else
-        {
-            anim.SetBool("walk", false);
-        }
-
-        if (Input.GetKey("s"))
-        {
-            anim.SetBool("walk", true);
-        }
-
-        else
-        {
-            anim.SetBool("walk", false);
-        }
-
-        if (Input.GetKey("d"))
-        {
-            anim.SetBool("walk", true);
-        }
-
-        else
-        {
-            anim.SetBool("walk", false);
-        }
+        
+        
 
 
+        velocity.y -= gravity * Time.deltaTime;
+
+        controller.Move(velocity * Time.deltaTime);
 
 
+        
+        
     }
+
+    IEnumerator JumpDelay()
+    {
+        yield return new WaitForSeconds (0.5f);
+        velocity.y = Mathf.Sqrt(jumpHeight * 2f * gravity);
+    }
+
+    
 }
