@@ -11,8 +11,11 @@ public class ThirdPersonMovement : MonoBehaviour
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
     bool isGrounded;
+    bool isJumping;
+    bool isAttacking;
 
     public float speed = 6f;
+    public float sprintSpeed = 12f;
     public float gravity = 9.81f;
     public float rotationSpeed = 90;
     public float jumpHeight = 3f;
@@ -38,14 +41,15 @@ public class ThirdPersonMovement : MonoBehaviour
             
         }
 
-
+        isJumping = false;
+        isAttacking = false;
         
         float horizontal = Input.GetAxisRaw("Horizontal");
         float verticle = Input.GetAxisRaw("Vertical");
         Vector3 direction = new Vector3(horizontal, 0f, verticle).normalized;
         anim.SetFloat("speed", direction.magnitude);
         anim.SetFloat("Yvelocity", velocity.y);
-        anim.SetFloat("Jump", velocity.y);
+        //anim.SetFloat("Jump", velocity.y);
 
 
         if (direction.magnitude >= 0.1f)
@@ -56,16 +60,29 @@ public class ThirdPersonMovement : MonoBehaviour
 
             Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
             controller.Move(moveDirection.normalized * speed * Time.deltaTime);
+
+            
+
         }
+
+        
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             StartCoroutine(JumpDelay());
             anim.SetBool("jumping", true);
-            
+            isJumping = true;
         }
-        
-        
+
+        if (isJumping == false)
+        {
+            anim.SetBool("jumping", false);
+
+        }
+
+
+
+        StartCoroutine(Attack());
 
 
         velocity.y -= gravity * Time.deltaTime;
@@ -73,7 +90,7 @@ public class ThirdPersonMovement : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
 
 
-        
+        //Attack();
         
     }
 
@@ -83,5 +100,23 @@ public class ThirdPersonMovement : MonoBehaviour
         velocity.y = Mathf.Sqrt(jumpHeight * 2f * gravity);
     }
 
+    IEnumerator Attack()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            anim.SetBool("punch", true);
+            isAttacking = true;
+            speed = 0f;
+            yield return new WaitForSeconds(1.3f);
+            anim.SetBool("punch", false);
+            speed = 6f;
+        }
+
+        /*if (isAttacking == false)
+        {
+            anim.SetBool("punch", false);
+            speed = 6f;
+        }*/
+    }
     
 }
