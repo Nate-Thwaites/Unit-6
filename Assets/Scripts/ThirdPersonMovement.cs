@@ -72,13 +72,17 @@ public class ThirdPersonMovement : MonoBehaviour
             StartCoroutine(JumpDelay());
             anim.SetBool("jumping", true);
             isJumping = true;
+           
         }
 
         if (isJumping == false)
         {
             anim.SetBool("jumping", false);
+            speed = 6f;
 
         }
+
+        
 
 
 
@@ -98,6 +102,7 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         yield return new WaitForSeconds (0.5f);
         velocity.y = Mathf.Sqrt(jumpHeight * 2f * gravity);
+        speed = 3f;
     }
 
     IEnumerator Attack()
