@@ -37,7 +37,7 @@ public class ThirdPersonMovement : MonoBehaviour
 
         if (isGrounded && velocity.y <0)
         {
-            velocity.y = 0f;
+            velocity.y = -2;
             
         }
 
@@ -49,7 +49,8 @@ public class ThirdPersonMovement : MonoBehaviour
         Vector3 direction = new Vector3(horizontal, 0f, verticle).normalized;
         anim.SetFloat("speed", direction.magnitude);
         anim.SetFloat("Yvelocity", velocity.y);
-        //anim.SetFloat("Jump", velocity.y);
+        //anim.SetFloat("Jump", velocity.y);]
+        anim.SetBool("falling", false);
 
 
         if (direction.magnitude >= 0.1f)
@@ -67,8 +68,9 @@ public class ThirdPersonMovement : MonoBehaviour
 
         
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButton("Jump") && isGrounded)
         {
+            speed = 2f;
             StartCoroutine(JumpDelay());
             anim.SetBool("jumping", true);
             isJumping = true;
@@ -78,12 +80,22 @@ public class ThirdPersonMovement : MonoBehaviour
         if (isJumping == false)
         {
             anim.SetBool("jumping", false);
-            speed = 6f;
+            //speed = 6f;
 
         }
 
-        
 
+        if (velocity.y < -2.3f && isGrounded == false)
+        {
+            anim.SetBool("falling", true);
+        }
+
+        if (velocity.y < -2.1f && isGrounded == true)
+        {
+            anim.SetBool("falling", false);
+        }
+
+     
 
 
         StartCoroutine(Attack());
@@ -102,7 +114,7 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         yield return new WaitForSeconds (0.5f);
         velocity.y = Mathf.Sqrt(jumpHeight * 2f * gravity);
-        speed = 3f;
+        speed = 6f;
     }
 
     IEnumerator Attack()
@@ -122,6 +134,8 @@ public class ThirdPersonMovement : MonoBehaviour
             anim.SetBool("punch", false);
             speed = 6f;
         }*/
+
+
     }
     
 }
