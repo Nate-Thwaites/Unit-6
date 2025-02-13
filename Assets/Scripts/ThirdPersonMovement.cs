@@ -6,6 +6,7 @@ public class ThirdPersonMovement : MonoBehaviour
     public CharacterController controller;
     public Transform cam;
     public Animator anim;
+    public GameObject breakableWall;
     
     public Transform groundCheck;
     public float groundDistance = 0.4f;
@@ -105,6 +106,8 @@ public class ThirdPersonMovement : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
 
+        
+
 
         //Attack();
         
@@ -137,5 +140,10 @@ public class ThirdPersonMovement : MonoBehaviour
 
 
     }
-    
+
+    private void OnTriggerEnter(Collider other)
+    {
+        breakableWall.SetActive(false);
+    }
+
 }
